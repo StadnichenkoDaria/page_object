@@ -1,54 +1,56 @@
-from selenium.webdriver.common.by import By
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
+from page_objects.CategoryPage import CategoryPage
+from page_objects.LoginPage import LoginPage
+from page_objects.MainPage import MainPage
+from page_objects.ProductPage import ProductPage
+from page_objects.RegisterAccountPage import RegisterAccountPage
 
-def test_check_main_page(browser):
+
+def test_visible_elements_main_page(browser):
     browser.get(browser.url)
-    wait = WebDriverWait(browser, 3)
-    wait.until(EC.title_is("Your Store"))
-    wait.until(EC.visibility_of_element_located((By.ID, "search")))
-    wait.until(EC.element_to_be_clickable((By.ID, "cart")))
-    wait.until(EC.visibility_of_element_located((By.ID, "menu")))
-    wait.until(EC.visibility_of_element_located((By.ID, "content")))
+    browser.find_element(*MainPage.SEARCH)
+    browser.find_element(*MainPage.CART)
+    browser.find_element(*MainPage.MENU)
+    browser.find_element(*MainPage.CONTENT)
 
 
 def test_product_macbook(browser):
     browser.get(browser.url + "/index.php?route=product/product&product_id=43")
     wait = WebDriverWait(browser, 3)
     wait.until(EC.title_is("MacBook"))
-    wait.until(EC.visibility_of_element_located((By.ID, "product-product")))
-    wait.until(EC.visibility_of_element_located((By.CLASS_NAME, "thumbnails")))
-    wait.until(EC.element_to_be_clickable((By.ID, "button-cart")))
-    wait.until(EC.text_to_be_present_in_element((By.ID, "button-cart"), "Add to Cart"))
+    wait.until(EC.visibility_of_element_located(ProductPage.PRODUCT_AREA))
+    wait.until(EC.visibility_of_element_located(ProductPage.THUMBNAILS))
+    wait.until(EC.element_to_be_clickable(ProductPage.BUTTON_CART))
+    wait.until(EC.text_to_be_present_in_element(ProductPage.BUTTON_CART, "Add to Cart"))
 
 
 def test_login_page_external(browser):
     browser.get(browser.url + "/admin")
     wait = WebDriverWait(browser, 3)
-    wait.until(EC.visibility_of_element_located((By.ID, "input-username")))
-    wait.until(EC.visibility_of_element_located((By.NAME, "password")))
-    wait.until(EC.visibility_of_element_located((By.CSS_SELECTOR, "button[type='submit']")))
-    wait.until(EC.visibility_of_element_located((By.XPATH, "//*[text()='OpenCart']")))
-    wait.until(EC.visibility_of_element_located((By.LINK_TEXT, "Forgotten Password")))
+    wait.until(EC.visibility_of_element_located(LoginPage.INPUT_USERNAME))
+    wait.until(EC.visibility_of_element_located(LoginPage.INPUT_PASSWORD))
+    wait.until(EC.visibility_of_element_located(LoginPage.SUBMIT_BUTTON))
+    wait.until(EC.visibility_of_element_located(LoginPage.OPENCART_LINK))
+    wait.until(EC.visibility_of_element_located(LoginPage.FORGOTTEN_PASSWORD))
 
 
 def test_register_account(browser):
     browser.get(browser.url + "/index.php?route=account/register")
     wait = WebDriverWait(browser, 3)
-    wait.until(EC.visibility_of_element_located((By.ID, "content")))
-    wait.until(EC.visibility_of_element_located((By.ID, "account")))
-    wait.until(EC.visibility_of_element_located((By.XPATH, "//*[text()='Your Password']")))
-    wait.until(EC.visibility_of_element_located((By.ID, "input-password")))
-    wait.until(EC.visibility_of_element_located((By.LINK_TEXT, "Register")))
+    wait.until(EC.visibility_of_element_located(RegisterAccountPage.CONTENT))
+    wait.until(EC.visibility_of_element_located(RegisterAccountPage.PERSONAL_DETAILS_AREA))
+    wait.until(EC.visibility_of_element_located(RegisterAccountPage.YOUR_PASSWORD_HEADER))
+    wait.until(EC.visibility_of_element_located(RegisterAccountPage.PASSWORD_INPUT))
+    wait.until(EC.visibility_of_element_located(RegisterAccountPage.REGISTER_LINK))
 
 
 def test_catalog(browser):
     browser.get(browser.url + "/index.php?route=product/category&path=20")
     wait = WebDriverWait(browser, 3)
-    wait.until(EC.visibility_of_element_located((By.ID, "product-category")))
-    wait.until(EC.visibility_of_element_located((By.ID, "column-left")))
-    wait.until(EC.element_to_be_clickable((By.ID, "list-view")))
-    wait.until(EC.element_to_be_clickable((By.ID, "grid-view")))
-    wait.until(EC.text_to_be_present_in_element((By.ID, "compare-total"), "Product Compare"))
-    
+    wait.until(EC.visibility_of_element_located(CategoryPage.CATEGORY_PAGE))
+    wait.until(EC.visibility_of_element_located(CategoryPage.COLUMN_LEFT))
+    wait.until(EC.element_to_be_clickable(CategoryPage.LIST_VIEW_BUTTON))
+    wait.until(EC.element_to_be_clickable(CategoryPage.GRID_VIEW_BUTTON))
+    wait.until(EC.text_to_be_present_in_element(CategoryPage.PRODUCT_COMPARE_LINK, "Product Compare"))

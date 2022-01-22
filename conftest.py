@@ -9,7 +9,7 @@ def pytest_addoption(parser):
     parser.addoption("--maximized", action="store_true", help="Maximize browser window")
     parser.addoption("--drivers", action="store_true", default=os.path.expanduser("~/Develop/drivers"))
     parser.addoption("--browser", action="store", default="chrome", choices=["chrome", "firefox", "opera"])
-    parser.addoption("--url", action="store", default="https://demo.opencart.com")
+    parser.addoption("--url", action="store", default="http://192.168.0.103:8081/")
 
 
 @pytest.fixture(scope="session")
