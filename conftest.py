@@ -1,15 +1,15 @@
 import os.path
-
 import pytest
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
+from page_objects.AdminLoginPage import AdminLoginPage
 
 
 def pytest_addoption(parser):
     parser.addoption("--maximized", action="store_true", help="Maximize browser window")
     parser.addoption("--drivers", action="store_true", default=os.path.expanduser("~/Develop/drivers"))
     parser.addoption("--browser", action="store", default="chrome", choices=["chrome", "firefox", "opera"])
-    parser.addoption("--url", action="store", default="http://192.168.0.103:8081/")
+    parser.addoption("--url", action="store", default="http://192.168.0.103:8081")
 
 
 @pytest.fixture(scope="session")
@@ -40,3 +40,18 @@ def browser(request):
     driver.url = url
 
     return driver
+
+
+@pytest.fixture
+def login_admin_page(browser):
+    browser.get(browser.url + "/admin/index.php?route=account/login")
+
+    browser.find_element(*AdminLoginPage.USERNAME_INPUT).click()
+    browser.find_element(*AdminLoginPage.USERNAME_INPUT).clear()
+    browser.find_element(*AdminLoginPage.USERNAME_INPUT).send_keys("user")
+
+    browser.find_element(*AdminLoginPage.PASSWORD_INPUT).click()
+    browser.find_element(*AdminLoginPage.PASSWORD_INPUT).clear()
+    browser.find_element(*AdminLoginPage.PASSWORD_INPUT).send_keys("bitnami")
+
+    browser.find_element(*AdminLoginPage.LOGIN_BUTTON).click()
