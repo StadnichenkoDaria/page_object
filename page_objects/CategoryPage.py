@@ -3,7 +3,8 @@ from page_objects.BasePage import BasePage
 
 
 class CategoryPage(BasePage):
-    CATEGORY_PAGE = (By.ID, "product-category")
+    CATEGORY_PAGE = "/index.php?route=product/category&path=20"
+    CATEGORY_AREA = (By.ID, "product-category")
     COLUMN_LEFT = (By.ID, "column-left")
     LIST_VIEW_BUTTON = (By.ID, "list-view")
     GRID_VIEW_BUTTON = (By.ID, "grid-view")

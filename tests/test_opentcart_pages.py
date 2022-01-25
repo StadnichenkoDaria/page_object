@@ -1,8 +1,5 @@
-import time
-
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-
 from page_objects.AdminPage import AdminPage
 from page_objects.CategoryPage import CategoryPage
 from page_objects.LoginPage import LoginPage
@@ -20,7 +17,7 @@ def test_visible_elements_main_page(browser):
 
 
 def test_visible_elements_product_macbook(browser):
-    browser.get(browser.url + "/index.php?route=product/product&product_id=43")
+    browser.get(browser.url + ProductPage.PRODUCT_PAGE)
     wait = WebDriverWait(browser, 3)
     wait.until(EC.title_is("MacBook"))
     wait.until(EC.visibility_of_element_located(ProductPage.PRODUCT_AREA))
@@ -30,7 +27,7 @@ def test_visible_elements_product_macbook(browser):
 
 
 def test_visible_elements_login_page_external(browser):
-    browser.get(browser.url + "/admin")
+    browser.get(browser.url + AdminPage.ADMIN_PAGE)
     wait = WebDriverWait(browser, 3)
     wait.until(EC.visibility_of_element_located(LoginPage.INPUT_USERNAME))
     wait.until(EC.visibility_of_element_located(LoginPage.INPUT_PASSWORD))
@@ -40,7 +37,7 @@ def test_visible_elements_login_page_external(browser):
 
 
 def test_visible_elements_register_account(browser):
-    browser.get(browser.url + "/index.php?route=account/register")
+    browser.get(browser.url + RegisterAccountPage.REGISTER_PAGE)
     wait = WebDriverWait(browser, 3)
     wait.until(EC.visibility_of_element_located(RegisterAccountPage.CONTENT))
     wait.until(EC.visibility_of_element_located(RegisterAccountPage.PERSONAL_DETAILS_AREA))
@@ -50,37 +47,31 @@ def test_visible_elements_register_account(browser):
 
 
 def test_visible_elements_catalog(browser):
-    browser.get(browser.url + "/index.php?route=product/category&path=20")
+    browser.get(browser.url + CategoryPage.CATEGORY_PAGE)
     wait = WebDriverWait(browser, 3)
-    wait.until(EC.visibility_of_element_located(CategoryPage.CATEGORY_PAGE))
+    wait.until(EC.visibility_of_element_located(CategoryPage.CATEGORY_AREA))
     wait.until(EC.visibility_of_element_located(CategoryPage.COLUMN_LEFT))
     wait.until(EC.element_to_be_clickable(CategoryPage.LIST_VIEW_BUTTON))
     wait.until(EC.element_to_be_clickable(CategoryPage.GRID_VIEW_BUTTON))
     wait.until(EC.text_to_be_present_in_element(CategoryPage.PRODUCT_COMPARE_LINK, "Product Compare"))
 
 
-def test_add_new_product_admin_page(browser, login_admin_page):
-    wait = WebDriverWait(browser, 3)
-    browser.find_element(*AdminPage.CATALOG_MENU).click()
-    wait.until(EC.visibility_of_element_located(AdminPage.PRODUCTS_PANEL))
-    browser.find_element(*AdminPage.PRODUCTS_PANEL).click()
+def test_add_new_product_admin_page(browser):
+    browser.get(browser.url + LoginPage.LOGIN_ADMIN_PAGE)
+    LoginPage(browser).login_admin_page()
+    AdminPage(browser).go_to_product_panel()
     browser.find_element(*AdminPage.ADD_NEW_PRODUCT_BUTTON).click()
-    browser.find_element(*AdminPage.PRODUCT_NAME_INPUT).click()
-    browser.find_element(*AdminPage.PRODUCT_NAME_INPUT).clear()
-    browser.find_element(*AdminPage.PRODUCT_NAME_INPUT).send_keys("Headphones Samsung")
-    browser.find_element(*AdminPage.META_TAG_TITLE_INPUT).click()
-    browser.find_element(*AdminPage.META_TAG_TITLE_INPUT).clear()
-    browser.find_element(*AdminPage.META_TAG_TITLE_INPUT).send_keys("Headphones Samsung")
+    AdminPage(browser).product_name_input("Headphones Samsung")
+    AdminPage(browser).meta_tag_title("Headphones Samsung")
     browser.find_element(*AdminPage.DATA_TAB).click()
-    browser.find_element(*AdminPage.MODEL_INPUT).click()
-    browser.find_element(*AdminPage.MODEL_INPUT).clear()
-    browser.find_element(*AdminPage.MODEL_INPUT).send_keys("Galaxy Buds Pro")
+    AdminPage(browser).model_input("Galaxy Buds Pro")
     browser.find_element(*AdminPage.SAVE_PRODUCT_BUTTON).click()
     browser.find_element(*AdminPage.SUCCESS_ALERT)
-    time.sleep(3)  # для демо
 
 
-def test_delete_product_admin_page(browser, login_admin_page):
+def test_delete_product_admin_page(browser):
+    browser.get(browser.url + LoginPage.LOGIN_ADMIN_PAGE)
+    LoginPage(browser).login_admin_page()
     wait = WebDriverWait(browser, 3)
     browser.find_element(*AdminPage.CATALOG_MENU).click()
     wait.until(EC.visibility_of_element_located(AdminPage.PRODUCTS_PANEL))
@@ -91,39 +82,22 @@ def test_delete_product_admin_page(browser, login_admin_page):
     alert = browser.switch_to.alert
     alert.accept()
     browser.find_element(*AdminPage.SUCCESS_ALERT)
-    time.sleep(3)  # для демо
 
 
 def test_register_new_user(browser):
-    browser.get(browser.url + "/index.php?route=account/register")
-    browser.find_element(*RegisterAccountPage.FIRST_NAME_INPUT).click()
-    browser.find_element(*RegisterAccountPage.FIRST_NAME_INPUT).clear()
-    browser.find_element(*RegisterAccountPage.FIRST_NAME_INPUT).send_keys("Ivan")
-    browser.find_element(*RegisterAccountPage.LASTNAME_INPUT).click()
-    browser.find_element(*RegisterAccountPage.LASTNAME_INPUT).clear()
-    browser.find_element(*RegisterAccountPage.LASTNAME_INPUT).send_keys("Ivanov")
-    browser.find_element(*RegisterAccountPage.EMAIL_INPUT).click()
-    browser.find_element(*RegisterAccountPage.EMAIL_INPUT).clear()
-    browser.find_element(*RegisterAccountPage.EMAIL_INPUT).send_keys("ivanov@mail.ru")
-    browser.find_element(*RegisterAccountPage.TELEPHONE_INPUT).click()
-    browser.find_element(*RegisterAccountPage.TELEPHONE_INPUT).clear()
-    browser.find_element(*RegisterAccountPage.TELEPHONE_INPUT).send_keys("+79992223344")
-    browser.find_element(*RegisterAccountPage.PASSWORD_INPUT).click()
-    browser.find_element(*RegisterAccountPage.PASSWORD_INPUT).clear()
-    browser.find_element(*RegisterAccountPage.PASSWORD_INPUT).send_keys("qwerty1")
-    browser.find_element(*RegisterAccountPage.CONFIRM_PASSWORD_INPUT).click()
-    browser.find_element(*RegisterAccountPage.CONFIRM_PASSWORD_INPUT).clear()
-    browser.find_element(*RegisterAccountPage.CONFIRM_PASSWORD_INPUT).send_keys("qwerty1")
+    browser.get(browser.url + RegisterAccountPage.REGISTER_PAGE)
+    RegisterAccountPage(browser).input_first_name(RegisterAccountPage.DEFAULT_FIRST_NAME)
+    RegisterAccountPage(browser).input_lastname(RegisterAccountPage.DEFAULT_LAST_NAME)
+    RegisterAccountPage(browser).input_email(RegisterAccountPage.DEFAULT_EMAIL)
+    RegisterAccountPage(browser).input_phone(RegisterAccountPage.DEFAULT_PHONE_NUMBER)
+    RegisterAccountPage(browser).input_password(RegisterAccountPage.DEFAULT_PASSWORD)
+    RegisterAccountPage(browser).input_confirm_password(RegisterAccountPage.DEFAULT_PASSWORD)
     browser.find_element(*RegisterAccountPage.PRIVACY_POLICY_CHECKBOX).click()
     browser.find_element(*RegisterAccountPage.CONTINUE_BUTTON).click()
-    time.sleep(3)  # для демо
 
 
 def test_switch_currency(browser):
     browser.get(browser.url)
-    browser.find_element(*MainPage.CURRENCY_FORM).click()
-    browser.find_element(*MainPage.POUND_CURRENCY).click()
-    browser.find_element(*MainPage.CURRENCY_FORM).click()
-    browser.find_element(*MainPage.EURO_CURRENCY).click()
-    browser.find_element(*MainPage.CURRENCY_FORM).click()
-    browser.find_element(*MainPage.US_CURRENCY).click()
+    MainPage(browser).switch_to_euro()
+    MainPage(browser).switch_to_usd()
+    MainPage(browser).switch_to_pound()
