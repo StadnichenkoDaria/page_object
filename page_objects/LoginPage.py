@@ -1,5 +1,6 @@
+import allure
 from selenium.webdriver.common.by import By
-from page_objects.BasePage import BasePage
+from .BasePage import BasePage
 
 
 class LoginPage(BasePage):
@@ -10,17 +11,17 @@ class LoginPage(BasePage):
     FORGOTTEN_PASSWORD = (By.LINK_TEXT, "Forgotten Password")
     OPENCART_LINK = (By.XPATH, "//*[text()='OpenCart']")
 
+    @allure.step("Ввод имени пользователя при логине")
     def input_username(self, user):
-        self.browser.find_element(*LoginPage.INPUT_USERNAME).click()
-        self.browser.find_element(*LoginPage.INPUT_USERNAME).clear()
-        self.browser.find_element(*LoginPage.INPUT_USERNAME).send_keys(user)
+        self.input(self.INPUT_USERNAME, user)
 
+    @allure.step("Ввод пароля при логине")
     def input_password(self, password):
-        self.browser.find_element(*LoginPage.INPUT_PASSWORD).click()
-        self.browser.find_element(*LoginPage.INPUT_PASSWORD).clear()
-        self.browser.find_element(*LoginPage.INPUT_PASSWORD).send_keys(password)
+        self.input(self.INPUT_PASSWORD, password)
 
-    def login_admin_page(self):
+    @allure.step("Логин на страницу администратора")
+    def login_admin_page(self, url):
+        self.go_to_page(url + self.LOGIN_ADMIN_PAGE)
         self.input_username("user")
         self.input_password("bitnami")
-        self.browser.find_element(*LoginPage.SUBMIT_BUTTON).click()
+        self.driver.find_element(*LoginPage.SUBMIT_BUTTON).click()

@@ -1,3 +1,4 @@
+import allure
 from selenium.webdriver.common.by import By
 from page_objects.BasePage import BasePage
 
@@ -24,32 +25,43 @@ class RegisterAccountPage(BasePage):
     DEFAULT_PHONE_NUMBER = "+79992223344"
     DEFAULT_PASSWORD = "qwerty1"
 
+    @allure.step("Ввод имени пользователя")
     def input_first_name(self, first_name):
-        self.browser.find_element(*RegisterAccountPage.FIRST_NAME_INPUT).click()
-        self.browser.find_element(*RegisterAccountPage.FIRST_NAME_INPUT).clear()
-        self.browser.find_element(*RegisterAccountPage.FIRST_NAME_INPUT).send_keys(first_name)
+        self.input(self.FIRST_NAME_INPUT, first_name)
 
+    @allure.step("Ввод фамилии пользователя")
     def input_lastname(self, last_name):
-        self.browser.find_element(*RegisterAccountPage.LASTNAME_INPUT).click()
-        self.browser.find_element(*RegisterAccountPage.LASTNAME_INPUT).clear()
-        self.browser.find_element(*RegisterAccountPage.LASTNAME_INPUT).send_keys(last_name)
+        self.input(self.LASTNAME_INPUT, last_name)
 
+    @allure.step("Ввод емейла пользователя")
     def input_email(self, email):
-        self.browser.find_element(*RegisterAccountPage.EMAIL_INPUT).click()
-        self.browser.find_element(*RegisterAccountPage.EMAIL_INPUT).clear()
-        self.browser.find_element(*RegisterAccountPage.EMAIL_INPUT).send_keys(email)
+        self.input(self.EMAIL_INPUT, email)
 
+    @allure.step("Ввод номера телефона пользователя")
     def input_phone(self, phone):
-        self.browser.find_element(*RegisterAccountPage.TELEPHONE_INPUT).click()
-        self.browser.find_element(*RegisterAccountPage.TELEPHONE_INPUT).clear()
-        self.browser.find_element(*RegisterAccountPage.TELEPHONE_INPUT).send_keys(phone)
+        self.input(self.TELEPHONE_INPUT, phone)
 
+    @allure.step("Ввод пароля пользователя")
     def input_password(self, password):
-        self.browser.find_element(*RegisterAccountPage.PASSWORD_INPUT).click()
-        self.browser.find_element(*RegisterAccountPage.PASSWORD_INPUT).clear()
-        self.browser.find_element(*RegisterAccountPage.PASSWORD_INPUT).send_keys(password)
+        self.input(self.PASSWORD_INPUT, password)
 
+    @allure.step("Повторный ввод пароля пользователя")
     def input_confirm_password(self, password):
-        self.browser.find_element(*RegisterAccountPage.CONFIRM_PASSWORD_INPUT).click()
-        self.browser.find_element(*RegisterAccountPage.CONFIRM_PASSWORD_INPUT).clear()
-        self.browser.find_element(*RegisterAccountPage.CONFIRM_PASSWORD_INPUT).send_keys(password)
+        self.input(self.CONFIRM_PASSWORD_INPUT, password)
+
+    @allure.step("Принятие политики конфиденциальности")
+    def privacy_policy_accept(self):
+        self.click_element(self.PRIVACY_POLICY_CHECKBOX)
+
+    @allure.step("Нажатие кнопки Продолжить")
+    def click_continue(self):
+        self.click_element(self.CONTINUE_BUTTON)
+
+    @allure.step("Создание нового пользователя")
+    def create_user(self, name, lastname, email, phone, password, confirm_password):
+        self.input_first_name(name)
+        self.input_lastname(lastname)
+        self.input_email(email)
+        self.input_phone(phone)
+        self.input_password(password)
+        self.input_confirm_password(confirm_password)

@@ -1,14 +1,19 @@
-import os.path
+import datetime
+import os
 import pytest
+import logging
+
 from selenium import webdriver
-from selenium.webdriver.chrome.service import Service
+
+DRIVERS = os.path.expanduser("~/Develop/drivers")
 
 
 def pytest_addoption(parser):
-    parser.addoption("--maximized", action="store_true", help="Maximize browser window")
-    parser.addoption("--drivers", action="store_true", default=os.path.expanduser("~/Develop/drivers"))
-    parser.addoption("--browser", action="store", default="chrome", choices=["chrome", "firefox", "opera"])
-    parser.addoption("--url", action="store", default="http://192.168.0.103:8081")
+    parser.addoption("--browser", action="store", default="chrome")
+    parser.addoption("--url", action="store", default="http://192.168.0.101:8081/")
+    parser.addoption("--executor", default="192.168.0.101")
+    parser.addoption("--log_level", action="store", default="DEBUG")
+    parser.addoption("--bversion", action="store", default="95.0")
 
 
 @pytest.fixture(scope="session")
@@ -19,23 +24,51 @@ def url(request):
 @pytest.fixture
 def browser(request):
     browser = request.config.getoption("--browser")
+    version = request.config.getoption("--bversion")
     url = request.config.getoption("--url")
-    maximized = request.config.getoption("--maximized")
-    drivers = request.config.getoption("--drivers")
+    log_level = request.config.getoption("--log_level")
+    executor = request.config.getoption('--executor')
+
+    executor_url = f"http://{executor}:4444/wd/hub"
+
+    capabilities = {
+        "browserName": browser,
+        "name": "Daria"
+    }
+
+    driver = webdriver.Remote(
+        command_executor=executor_url,
+        desired_capabilities=capabilities
+    )
+
+    logger = logging.getLogger('driver')
+    test_name = request.node.name
+
+    logger.addHandler(logging.FileHandler(f"logs/{test_name}.log"))
+    logger.setLevel(level=log_level)
+
+    logger.info("===> Test {} started at {}".format(test_name, datetime.datetime.now()))
 
     if browser == "chrome":
-        service = Service(executable_path=drivers + "/chromedriver")
-        driver = webdriver.Chrome(service=service)
+        driver = webdriver.Chrome(executable_path=f"{DRIVERS}/chromedriver")
     elif browser == "firefox":
-        driver = webdriver.Firefox(executable_path=drivers + "/geckodriver")
-    elif browser == "opera":
-        driver = webdriver.Opera(executable_path=drivers + "/operadriver")
+        driver = webdriver.Firefox(executable_path=f"{DRIVERS}/geckodriver")
+    else:
+        driver = webdriver.Remote(
+            command_executor="http://{}:4444/wd/hub".format(url),
+            desired_capabilities={"browserName": browser}
+        )
 
-    driver.maximize_window()
+    driver.test_name = test_name
+    driver.log_level = log_level
 
-    request.addfinalizer(driver.close)
+    logger.info("Browser:{}".format(browser, driver.desired_capabilities))
 
+    def fin():
+        driver.quit()
+        logger.info("===> Test {} finished at {}".format(test_name, datetime.datetime.now()))
+
+    request.addfinalizer(fin)
     driver.get(url)
     driver.url = url
-
     return driver

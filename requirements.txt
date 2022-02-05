@@ -1,2 +1,5 @@
-selenium==4.0.0
-pytest==6.2.0
+pytest==6.2.3
+selenium==4.1.0
+allure-python-commons==2.9.45
+requests==2.25.1
+pytest-xdist==2.2.1

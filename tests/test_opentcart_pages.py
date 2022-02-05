@@ -1,3 +1,4 @@
+import allure
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from page_objects.AdminPage import AdminPage
@@ -56,48 +57,49 @@ def test_visible_elements_catalog(browser):
     wait.until(EC.text_to_be_present_in_element(CategoryPage.PRODUCT_COMPARE_LINK, "Product Compare"))
 
 
-def test_add_new_product_admin_page(browser):
-    browser.get(browser.url + LoginPage.LOGIN_ADMIN_PAGE)
-    LoginPage(browser).login_admin_page()
-    AdminPage(browser).go_to_product_panel()
-    browser.find_element(*AdminPage.ADD_NEW_PRODUCT_BUTTON).click()
-    AdminPage(browser).product_name_input("Headphones Samsung")
-    AdminPage(browser).meta_tag_title("Headphones Samsung")
-    browser.find_element(*AdminPage.DATA_TAB).click()
-    AdminPage(browser).model_input("Galaxy Buds Pro")
-    browser.find_element(*AdminPage.SAVE_PRODUCT_BUTTON).click()
-    browser.find_element(*AdminPage.SUCCESS_ALERT)
+@allure.title('Добавление товара в раздел разминистратора')
+def test_add_new_product_admin_page(browser, url):
+    login_page = LoginPage(browser)
+    admin_page = AdminPage(browser)
+    login_page.login_admin_page(url)
+    admin_page.go_to_product_page()
+    admin_page.add_new_product("Headphones Samsung", "Headphones Samsung", "Galaxy Buds Pro")
+    admin_page.check_alert_msg()
 
 
-def test_delete_product_admin_page(browser):
-    browser.get(browser.url + LoginPage.LOGIN_ADMIN_PAGE)
-    LoginPage(browser).login_admin_page()
+@allure.title('Удаление товара из раздела разминистратора')
+def test_delete_product_admin_page(browser, url):
     wait = WebDriverWait(browser, 3)
-    browser.find_element(*AdminPage.CATALOG_MENU).click()
-    wait.until(EC.visibility_of_element_located(AdminPage.PRODUCTS_PANEL))
-    browser.find_element(*AdminPage.PRODUCTS_PANEL).click()
-    browser.find_element(*AdminPage.PRODUCT_CHECKBOX).click()
-    browser.find_element(*AdminPage.PRODUCT_TRASH).click()
+    login_page = LoginPage(browser)
+    admin_page = AdminPage(browser)
+    login_page.login_admin_page(url)
+    admin_page.go_to_product_page()
+    admin_page.delete_product()
     wait.until(EC.alert_is_present())
     alert = browser.switch_to.alert
     alert.accept()
-    browser.find_element(*AdminPage.SUCCESS_ALERT)
+    admin_page.check_alert_msg()
 
 
-def test_register_new_user(browser):
+@allure.feature('Registration')
+@allure.title('Регистрация нового пользователя')
+def test_register_new_user(browser, url):
+    register_page = RegisterAccountPage(browser)
     browser.get(browser.url + RegisterAccountPage.REGISTER_PAGE)
-    RegisterAccountPage(browser).input_first_name(RegisterAccountPage.DEFAULT_FIRST_NAME)
-    RegisterAccountPage(browser).input_lastname(RegisterAccountPage.DEFAULT_LAST_NAME)
-    RegisterAccountPage(browser).input_email(RegisterAccountPage.DEFAULT_EMAIL)
-    RegisterAccountPage(browser).input_phone(RegisterAccountPage.DEFAULT_PHONE_NUMBER)
-    RegisterAccountPage(browser).input_password(RegisterAccountPage.DEFAULT_PASSWORD)
-    RegisterAccountPage(browser).input_confirm_password(RegisterAccountPage.DEFAULT_PASSWORD)
-    browser.find_element(*RegisterAccountPage.PRIVACY_POLICY_CHECKBOX).click()
-    browser.find_element(*RegisterAccountPage.CONTINUE_BUTTON).click()
+    register_page.create_user(register_page.DEFAULT_FIRST_NAME,
+                              register_page.DEFAULT_LAST_NAME,
+                              register_page.DEFAULT_EMAIL,
+                              register_page.DEFAULT_PHONE_NUMBER,
+                              register_page.DEFAULT_PASSWORD,
+                              register_page.DEFAULT_PASSWORD)
+    register_page.privacy_policy_accept()
+    register_page.click_continue()
 
 
+@allure.title('Переключение валют')
 def test_switch_currency(browser):
+    main_page = MainPage(browser)
     browser.get(browser.url)
-    MainPage(browser).switch_to_euro()
-    MainPage(browser).switch_to_usd()
-    MainPage(browser).switch_to_pound()
+    main_page.switch_to_euro()
+    main_page.switch_to_usd()
+    main_page.switch_to_pound()
