@@ -1,13 +1,12 @@
+import allure
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from page_objects.AdminPage import AdminPage
-from page_objects.BasePage import BasePage
 from page_objects.CategoryPage import CategoryPage
 from page_objects.LoginPage import LoginPage
 from page_objects.MainPage import MainPage
 from page_objects.ProductPage import ProductPage
 from page_objects.RegisterAccountPage import RegisterAccountPage
-import time
 
 
 def test_visible_elements_main_page(browser):
@@ -58,6 +57,7 @@ def test_visible_elements_catalog(browser):
     wait.until(EC.text_to_be_present_in_element(CategoryPage.PRODUCT_COMPARE_LINK, "Product Compare"))
 
 
+@allure.title('Добавление товара в раздел разминистратора')
 def test_add_new_product_admin_page(browser, url):
     login_page = LoginPage(browser)
     admin_page = AdminPage(browser)
@@ -67,6 +67,7 @@ def test_add_new_product_admin_page(browser, url):
     admin_page.check_alert_msg()
 
 
+@allure.title('Удаление товара из раздела разминистратора')
 def test_delete_product_admin_page(browser, url):
     wait = WebDriverWait(browser, 3)
     login_page = LoginPage(browser)
@@ -80,6 +81,8 @@ def test_delete_product_admin_page(browser, url):
     admin_page.check_alert_msg()
 
 
+@allure.feature('Registration')
+@allure.title('Регистрация нового пользователя')
 def test_register_new_user(browser, url):
     register_page = RegisterAccountPage(browser)
     browser.get(browser.url + RegisterAccountPage.REGISTER_PAGE)
@@ -93,6 +96,7 @@ def test_register_new_user(browser, url):
     register_page.click_continue()
 
 
+@allure.title('Переключение валют')
 def test_switch_currency(browser):
     main_page = MainPage(browser)
     browser.get(browser.url)

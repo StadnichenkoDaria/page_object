@@ -10,8 +10,10 @@ DRIVERS = os.path.expanduser("~/Develop/drivers")
 
 def pytest_addoption(parser):
     parser.addoption("--browser", action="store", default="chrome")
-    parser.addoption("--url", action="store", default="http://192.168.0.101:8081")
+    parser.addoption("--url", action="store", default="http://192.168.0.101:8081/")
+    parser.addoption("--executor", default="192.168.0.101")
     parser.addoption("--log_level", action="store", default="DEBUG")
+    parser.addoption("--bversion", action="store", default="95.0")
 
 
 @pytest.fixture(scope="session")
@@ -22,8 +24,22 @@ def url(request):
 @pytest.fixture
 def browser(request):
     browser = request.config.getoption("--browser")
+    version = request.config.getoption("--bversion")
     url = request.config.getoption("--url")
     log_level = request.config.getoption("--log_level")
+    executor = request.config.getoption('--executor')
+
+    executor_url = f"http://{executor}:4444/wd/hub"
+
+    capabilities = {
+        "browserName": browser,
+        "name": "Daria"
+    }
+
+    driver = webdriver.Remote(
+        command_executor=executor_url,
+        desired_capabilities=capabilities
+    )
 
     logger = logging.getLogger('driver')
     test_name = request.node.name

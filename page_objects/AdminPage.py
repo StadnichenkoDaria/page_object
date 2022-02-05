@@ -1,10 +1,6 @@
+import allure
 from selenium.webdriver.common.by import By
-# from BasePage import BasePage
-from selenium.webdriver.support.wait import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
 from .BasePage import BasePage
-import logging
-import time
 
 
 class AdminPage(BasePage):
@@ -22,42 +18,37 @@ class AdminPage(BasePage):
     PRODUCT_CHECKBOX = (By.XPATH, '//*[@id="form-product"]/div/table/tbody/tr[3]/td[1]/input',)
     PRODUCT_TRASH = (By.XPATH, '//*[@id="content"]//*[@class="fa fa-trash-o"]')
 
-    # def __config_logger(self):
-    #     self.logger = logging.getLogger(type(self).__name__)
-    #     self.logger.addHandler(logging.FileHandler(f"logs/{self.browser.test_name}.log"))
-    #     self.logger.setLevel(level=self.browser.log_level)
-
-    # перейти на страницу "Товары"
+    @allure.step("Переход на страницу товаров")
     def go_to_product_page(self):
         self.click_element(self.CATALOG_MENU)
         self.click_element(self.PRODUCTS_PANEL)
 
-    # нажать на кнопку "добавить новый товар"
+    @allure.step("Клик на кнопку Добавить новый товар")
     def click_add_new_product_button(self):
         self.click_element(self.ADD_NEW_PRODUCT_BUTTON)
 
-    # ввести имя товара
+    @allure.step("Ввод названия товара")
     def product_name_input(self, product):
         self.input(self.PRODUCT_NAME_INPUT, product)
 
-    # ввести тег-тайтл
+    @allure.step("Ввод тег-тайтла")
     def meta_tag_title(self, tag):
         self.input(self.META_TAG_TITLE_INPUT, tag)
 
-    # ввести назваение модели товара
+    @allure.step("Ввод модели товара")
     def model_input(self, model):
         self.click_element(self.DATA_TAB)
         self.input(self.MODEL_INPUT, model)
 
-    # нажать кнопку "Сохранить"
+    @allure.step("Нажатие на кнопку Сохранить")
     def press_save_button(self):
         self.click_element(self.SAVE_PRODUCT_BUTTON)
 
-    # проверить алерт
+    @allure.step("Проверка наличия алерта")
     def check_alert_msg(self):
         self.check_element_presence(self.SUCCESS_ALERT)
 
-    # добавить новый товар
+    @allure.step("Добавление нового товара в раздел администрирования")
     def add_new_product(self, name, tag_title, model):
         self.click_add_new_product_button()
         self.product_name_input(name)
@@ -65,9 +56,7 @@ class AdminPage(BasePage):
         self.model_input(model)
         self.press_save_button()
 
-    # удалить товар
+    @allure.step("Удаление товара из раздела администрирования")
     def delete_product(self):
         self.click_element(self.PRODUCT_CHECKBOX)
         self.click_element(self.PRODUCT_TRASH)
-
-

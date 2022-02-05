@@ -1,3 +1,4 @@
+import allure
 from selenium.webdriver.common.by import By
 from page_objects.BasePage import BasePage
 
@@ -24,39 +25,39 @@ class RegisterAccountPage(BasePage):
     DEFAULT_PHONE_NUMBER = "+79992223344"
     DEFAULT_PASSWORD = "qwerty1"
 
-    # ввести имя пользователя
+    @allure.step("Ввод имени пользователя")
     def input_first_name(self, first_name):
         self.input(self.FIRST_NAME_INPUT, first_name)
 
-    # ввести фамилию пользователя
+    @allure.step("Ввод фамилии пользователя")
     def input_lastname(self, last_name):
         self.input(self.LASTNAME_INPUT, last_name)
 
-    # ввести емейл пользователя
+    @allure.step("Ввод емейла пользователя")
     def input_email(self, email):
         self.input(self.EMAIL_INPUT, email)
 
-    # ввести номер телефона пользователя
+    @allure.step("Ввод номера телефона пользователя")
     def input_phone(self, phone):
         self.input(self.TELEPHONE_INPUT, phone)
 
-    # ввести пароль пользователя
+    @allure.step("Ввод пароля пользователя")
     def input_password(self, password):
         self.input(self.PASSWORD_INPUT, password)
 
-    # ввести подтверждение пароля
+    @allure.step("Повторный ввод пароля пользователя")
     def input_confirm_password(self, password):
         self.input(self.CONFIRM_PASSWORD_INPUT, password)
 
-    # принять политику конфиденциальности
+    @allure.step("Принятие политики конфиденциальности")
     def privacy_policy_accept(self):
         self.click_element(self.PRIVACY_POLICY_CHECKBOX)
 
-    # нажать кнопку "Продолжить"
+    @allure.step("Нажатие кнопки Продолжить")
     def click_continue(self):
         self.click_element(self.CONTINUE_BUTTON)
 
-    # создать пользователя
+    @allure.step("Создание нового пользователя")
     def create_user(self, name, lastname, email, phone, password, confirm_password):
         self.input_first_name(name)
         self.input_lastname(lastname)
