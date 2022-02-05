@@ -28,8 +28,8 @@ def browser(request):
     logger = logging.getLogger('driver')
     test_name = request.node.name
 
-    # logger.addHandler(logging.FileHandler(f"logs/{test_name}.log"))
-    # logger.setLevel(level=log_level)
+    logger.addHandler(logging.FileHandler(f"logs/{test_name}.log"))
+    logger.setLevel(level=log_level)
 
     logger.info("===> Test {} started at {}".format(test_name, datetime.datetime.now()))
 
