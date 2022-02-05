@@ -13,14 +13,13 @@ class MainPage(BasePage):
     US_CURRENCY = (By.XPATH, '//*[@id="form-currency"]//button[@name="USD"]')
 
     def switch_to_euro(self):
-        self.browser.find_element(*MainPage.CURRENCY_FORM).click()
-        self.browser.find_element(*MainPage.EURO_CURRENCY).click()
+        self.click_element(self.CURRENCY_FORM)
+        self.click_element(self.EURO_CURRENCY)
 
     def switch_to_pound(self):
-        self.browser.find_element(*MainPage.CURRENCY_FORM).click()
-        self.browser.find_element(*MainPage.POUND_CURRENCY).click()
+        self.click_element(self.CURRENCY_FORM)
+        self.click_element(self.POUND_CURRENCY)
 
     def switch_to_usd(self):
-        self.browser.find_element(*MainPage.CURRENCY_FORM).click()
-        currency = self.browser.find_element(*MainPage.US_CURRENCY).click()
-        return currency
+        self.click_element(self.CURRENCY_FORM)
+        self.click_element(self.US_CURRENCY)
